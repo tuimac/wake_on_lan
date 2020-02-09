@@ -3,7 +3,7 @@ FROM centos:7
 ARG url=https://github.com/tuimac/wake_on_lan.git
 ENV LANG C.UTF-8
 
-EXPOSE 53
+EXPOSE 9999
 WORKDIR /root
 
 ADD env/vimrc /root/.vimrc

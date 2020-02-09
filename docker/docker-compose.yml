@@ -1,21 +1,22 @@
 version: '3'
-
 services:
-    tagdns:
-        build: ./api
-        container_name: api
-        volumes:
-            - "./api/volume:/tmp"
-        tty: true
-        stdin_open: true
-    test:
-        build: ./client
-        container_name: client
-        volumes:
-            - "./client/volume:/tmp"
-        tty: true
-        stdin_open: true
+  api:
+    build: ./api
+      container_name: api
+      volumes:
+        - "./api/volume:/tmp"
+      tty: true
+      stdin_open: true
+  target:
+    build: ./target
+    container_name: target
+    ports:
+      - "9999:9999"
+    volumes:
+      - "./target/volume:/tmp"
+    tty: true
+    stdin_open: true
 networks:
-    default:
-        external:
-            name: br0
+  default:
+    external:
+      name: br0
