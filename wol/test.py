@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 #!/usr/bin/env python3
 
 import re
+=======
+mport re
+>>>>>>> 94aadea11bd0767410bd69ef8c5318ece8a4984c
 import binascii
 
 if __name__ =="__main__":
@@ -20,7 +24,11 @@ if __name__ =="__main__":
          "c": b"\x0c", "d": b"\x0d",
          "e": b"\x0e", "f": b"\x0f",
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 94aadea11bd0767410bd69ef8c5318ece8a4984c
     for byte in mac:
         byte_order += hexMap[byte]
 
