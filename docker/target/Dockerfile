@@ -25,4 +25,4 @@ RUN yum update -y && \
     mkdir -p ~/.vim/undo && \
     mkdir -p ~/.vim/swap
     
-ADD env/add_remote_repo /root/add_remote_repo
+ADD env/add_remote_repo /root/wake_on_lan/add_remote_repo
