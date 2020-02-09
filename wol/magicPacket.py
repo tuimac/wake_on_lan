@@ -27,5 +27,9 @@ class MagicPacket:
 
 
     def sendPacket(self):
-        
+        ip = "10.0.240.3"
+        port = 9999
+
+        data = self.__createPacket()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.sendto(data, (ip, port))
