@@ -3,7 +3,7 @@
 from magicPacket import MagicPacket
 
 def main():
-    macAddress = "12:AB:34:CD:56:EF"
+    macAddress = "24:b6:fd:fd:fe:28"
     mp = MagicPacket(macAddress)
     mp.sendPacket()
     #print(mp.sendPacket())

@@ -2,32 +2,40 @@ import socket
 import re
 
 class MagicPacket:
-    def __init__(self, mac):
-        self.mac = mac
+    def __init__(self, macAddress):
+        self.mac = macAddress
 
     def __createPacket(self):
-        mac = self.mac.replace(":", "").replace("-", "").lower()
-        data = b"\xff"
+        macAddress = self.mac.replace(":", "").replace("-", "").lower()
 
-        byteMap = {
-             "0": b"\x00", "1": b"\x01",
-             "2": b"\x02", "3": b"\x03",
-             "4": b"\x04", "5": b"\x05",
-             "6": b"\x06", "7": b"\x07",
-             "8": b"\x08", "9": b"\x09",
-             "a": b"\x0a", "b": b"\x0b",
-             "c": b"\x0c", "d": b"\x0d",
-             "e": b"\x0e", "f": b"\x0f",
+        secondDigit = {
+             "0": 0, "1": 16,
+             "2": 32, "3": 48,
+             "4": 64, "5": 80,
+             "6": 96, "7": 112,
+             "8": 128, "9": 144,
+             "a": 160, "b": 176,
+             "c": 192, "d": 208,
+             "e": 224, "f": 240,
+        }
+        firstDigit = {
+             "0": 0, "1": 1,
+             "2": 2, "3": 3,
+             "4": 4, "5": 5,
+             "6": 6, "7": 7,
+             "8": 8, "9": 9,
+             "a": 10, "b": 11,
+             "c": 12, "d": 13,
+             "e": 14, "f": 15,
         }
 
-        for byte in mac:
-            data += byteMap[byte]
+        data = "ffffffffffff" + "".join(macAddress for i in range(16))
+        data = bytes(bytearray(data, 'utf-8'))
         print(data)
         return data
 
-
     def sendPacket(self):
-        ip = "10.0.240.3"
+        ip = socket.gethostbyname("node7")
         port = 9999
 
         data = self.__createPacket()
