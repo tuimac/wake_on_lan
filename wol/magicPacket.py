@@ -1,4 +1,5 @@
 import socket
+import re
 
 class MagicPacket:
     def __init__(self, mac):
@@ -23,6 +24,7 @@ class MagicPacket:
             data += byteMap[byte]
         print(data)
         return data
+
 
     def sendPacket(self):
         ip = "10.0.240.3"
