@@ -28,9 +28,13 @@ class MagicPacket:
              "c": 12, "d": 13,
              "e": 14, "f": 15,
         }
+        data = bytearray()
+        for i in range(0, len(macAddress), 2):
+            data = 
 
-        data = "ffffffffffff" + "".join(macAddress for i in range(16))
-        data = bytes(bytearray(data, 'utf-8'))
+
+        #data = "ffffffffffff" + "".join(macAddress for i in range(16))
+        #data = bytes(bytearray(data, 'utf-8'))
         print(data)
         return data
 
