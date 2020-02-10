@@ -1,5 +1,6 @@
 import socket
 import re
+import struct
 
 class MagicPacket:
     def __init__(self, macAddress):
@@ -7,18 +8,8 @@ class MagicPacket:
 
     def __createPacket(self):
         macAddress = self.mac.replace(":", "").replace("-", "").lower()
-
-        secondDigit = {
-             "0": 0, "1": 16,
-             "2": 32, "3": 48,
-             "4": 64, "5": 80,
-             "6": 96, "7": 112,
-             "8": 128, "9": 144,
-             "a": 160, "b": 176,
-             "c": 192, "d": 208,
-             "e": 224, "f": 240,
-        }
-        firstDigit = {
+        print(macAddress)
+        hexTable = {
              "0": 0, "1": 1,
              "2": 2, "3": 3,
              "4": 4, "5": 5,
@@ -28,20 +19,22 @@ class MagicPacket:
              "c": 12, "d": 13,
              "e": 14, "f": 15,
         }
+        header = b"\xff\xff\xff\xff\xff\xff"
         data = bytearray()
         for i in range(0, len(macAddress), 2):
-            data = 
-
-
-        #data = "ffffffffffff" + "".join(macAddress for i in range(16))
-        #data = bytes(bytearray(data, 'utf-8'))
+            #print(macAddress[i] + macAddress[i + 1])
+            data.append(hexTable[macAddress[i]] * 16 + hexTable[macAddress[i + 1]])
+        print(data)
+        data = bytes(data)
+        data = header + b"".join(data for i in range(16))
         print(data)
         return data
 
     def sendPacket(self):
-        ip = socket.gethostbyname("node7")
+        #ip = socket.gethostbyname("node7")
         port = 9999
 
         data = self.__createPacket()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.sendto(data, (ip, port))
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.sendto(data,("10.0.222.255", port))
