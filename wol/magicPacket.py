@@ -1,7 +1,7 @@
 import socket
 import re
 import struct
-
+import ipaddress
 
 class MagicPacket:
     def __init__(self, macAddress):
@@ -23,6 +23,7 @@ class MagicPacket:
         return data
 
     def __getBroadcastIp(self):
+        
         
     
     def sendPacket(self):
