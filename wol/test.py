@@ -3,19 +3,17 @@
 import re
 import binascii
 import socket
-import struct
-import fcntl
+
+
+def createPacket():
+    pass
 
 if __name__ =="__main__":
-    '''
-    #sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    nic = "wlp1s0"
-    ip = socket.gethostbyname(socket.gethostname())
-    #test = IPv4Network(ip)
-    test = ipaddress.ip_network(ip).subnets()
-    print(list(test))
-    '''
+    iface = "eth0@if25"
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    iface = "eno1"
-    #print(struct.pack("256s", iface.encode()))
-    socket.inet_ntoa(fcntl.ioctl(socket.socket(socket.AF_INET, socket.SOCK_DGRAM), 35099, struct.pack('256s', iface.encode()))[20:24])
+    '''
+    ip = socket.gethostbyname(socket.gethostname())
+    sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+    sock.bind(())
+    '''
