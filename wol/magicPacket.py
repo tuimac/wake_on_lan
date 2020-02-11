@@ -19,7 +19,23 @@ class MagicPacket:
         data = b"\xff\xff\xff\xff\xff\xff" + b"".join(bytes(data) for i in range(16))
         print(data)
         return data
+<<<<<<< HEAD
    
+=======
+
+    def __getBroadcastIp(self):
+<<<<<<< HEAD
+                 
+        
+=======
+
+        ip = socket.gethostbyname(socket.gethostname())
+        subnet = "255.255.255.0"
+        broadcast = IPv4Network(ip + "/" + subnet, False).broadcast_address
+        return broadcast
+>>>>>>> 32bd14c2dcb4ef728644a2dc1bc662b6ba5e2eb2
+    
+>>>>>>> a344dd4e05c2bb0c4425d731bf49ea5ccdbfe7ee
     def sendPacket(self):
         ip = "255.255.255.255"
         port = 9999
