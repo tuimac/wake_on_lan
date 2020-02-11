@@ -23,16 +23,10 @@ class MagicPacket:
         return data
 
     def __getBroadcastIp(self):
-<<<<<<< HEAD
-                 
-        
-=======
-
         ip = socket.gethostbyname(socket.gethostname())
         subnet = "255.255.255.0"
         broadcast = IPv4Network(ip + "/" + subnet, False).broadcast_address
         return broadcast
->>>>>>> 32bd14c2dcb4ef728644a2dc1bc662b6ba5e2eb2
     
     def sendPacket(self):
         ip = self.__getBroadcastIp()
