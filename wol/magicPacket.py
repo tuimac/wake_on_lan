@@ -1,11 +1,9 @@
 import socket
 import re
-from ipaddress import IPv4Network
 
 class MagicPacket:
-    def __init__(self, macAddress, networkInterface):
+    def __init__(self, macAddress):
         self.mac = macAddress
-        self.nic = networkInterface
 
     def __createPacket(self):
         hexTable = {
@@ -21,6 +19,9 @@ class MagicPacket:
         data = b"\xff\xff\xff\xff\xff\xff" + b"".join(bytes(data) for i in range(16))
         print(data)
         return data
+<<<<<<< HEAD
+   
+=======
 
     def __getBroadcastIp(self):
         ip = socket.gethostbyname(socket.gethostname())
@@ -28,8 +29,9 @@ class MagicPacket:
         broadcast = IPv4Network(ip + "/" + subnet, False).broadcast_address
         return broadcast
     
+>>>>>>> a344dd4e05c2bb0c4425d731bf49ea5ccdbfe7ee
     def sendPacket(self):
-        ip = self.__getBroadcastIp()
+        ip = "255.255.255.255"
         port = 9999
 
         data = self.__createPacket()
