@@ -23,7 +23,7 @@ class MagicPacket:
         return data
 
     def __getBroadcastIp(self):
-        
+                 
         
     
     def sendPacket(self):
