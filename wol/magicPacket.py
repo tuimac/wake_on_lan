@@ -17,24 +17,14 @@ class MagicPacket:
         for i in range(0, len(macAddress), 2):
             data.append(hexTable[macAddress[i]] * 16 + hexTable[macAddress[i + 1]])
         data = b"\xff\xff\xff\xff\xff\xff" + b"".join(bytes(data) for i in range(16))
-        print(data)
         return data
-<<<<<<< HEAD
-   
-=======
-
-    def __getBroadcastIp(self):
-        ip = socket.gethostbyname(socket.gethostname())
-        subnet = "255.255.255.0"
-        broadcast = IPv4Network(ip + "/" + subnet, False).broadcast_address
-        return broadcast
     
->>>>>>> a344dd4e05c2bb0c4425d731bf49ea5ccdbfe7ee
-    def sendPacket(self):
-        ip = "255.255.255.255"
-        port = 9999
+    def __checkWakeUp(self):
+        
 
+    def sendPacket(self):
         data = self.__createPacket()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        sock.sendto(data,(ip, port))
+        sock.sendto(data,("255.255.255.255", 9))
+        self.__checkWakeUp()
