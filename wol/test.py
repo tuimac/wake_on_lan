@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 
-import re
-import binascii
-import socket
-import struct
-import fcntl
+from icmp import Icmp
 
 if __name__ =="__main__":
-    sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, ICMP_CODE)
-    data = bytearray()
-    
+    icmp = Icmp()
+    icmp.createPacket(8)
