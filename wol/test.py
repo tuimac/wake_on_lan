@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
-import random
+import struct
+import socket
 
 if __name__ == '__main__':
-    for i in range(10):
-        print(random.randint(0, 65355))
+    ip = "10.0.222.7"
+    ip = socket.inet_aton(ip)
+    print(ip)
+    ip = ip * 1.5
+    print(ip)

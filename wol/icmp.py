@@ -2,34 +2,31 @@ import socket
 import struct
 import random
 
-class ControlMessages:
-    def __init__(self):
-        pass
-
-    def echoRequest(self, type, size=32):
-        code = 0
-        checksum = 0
-        identifier = random.randint(0, 65356)
-        
-
 class Icmp:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
 
-    def createPacket(self, type):
-        #Code this function is based on this rfc article.
-        #http://www.networksorcery.com/enp/rfc/rfc792.txt
+    def __checksum(self, data):
+        return 0
 
-        cm = ControlMessages()
-        typeswitcher = {
-            8: "echoRequest"
-        }
-        method = getattr(cm, typeswitcher[type])(type)
-        return method
+    def echoRequest(self, ip, times, size=64):
+        ip = socket.gethostbyname(ip)
 
-    def checksum(self, data):
-        pass
+        def createPacket(sequence):
+            type = 8
+            code = 0
+            checksum = 0
+            identifier = random.randint(0, 65355)
 
-    def ping(self):
-        packet = self.createPacket(8)
+            header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
+            data = b"\xff" * size
+            packet = header + data
+            print(packet)
+            checksum = self.__checksum(header + packet)
+            header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
+            packet = header + data
+            return packet
 
+        for i in range(1, times + 1):
+            packet = createPacket(i)
+            sendto = self.sock.sendto(packet, (ip, type))
