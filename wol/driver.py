@@ -3,6 +3,6 @@
 from icmp import Icmp
 
 if __name__ =="__main__":
-    ip = "node7"
+    ip = "10.0.222.20"
     icmp = Icmp()
-    icmp.echoRequest(ip, 1)
+    icmp.echoRequest(ip, 10)
