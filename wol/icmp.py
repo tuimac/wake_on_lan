@@ -8,11 +8,12 @@ import traceback
 class Icmp:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+        self.stop = False
 
-    def checksum(self, data):
+    def __checksum(self, data):
         return 0
 
-    def createPacket(self, sequence):
+    def createPacket(self, sequence, size):
         type = 8
         code = 0
         checksum = 0
@@ -27,30 +28,29 @@ class Icmp:
         return packet
 
     def receiver(self, queue, sourceIp):
-        self.sock.bind((sourceIp, 60000))
-        while stop == False:
+        self.sock.bind((sourceIp, 0))
+        while self.stop == False:
             packet = self.sock.recvfrom(1024)
+            print(packet)
             queue.put(packet)
 
     def echoRequest(self, destIp, times, size=64):
         destIp = socket.gethostbyname(destIp)
         sourceIp = socket.gethostbyname(socket.getfqdn())
-        stop = False
-
-        print(sourceIp)
-        print(destIp)
 
         try:
             queue = Queue()
-            recv = threading.Thread(target=receiver, name="receiver",args=(queue, sourceIp))
+            recv = threading.Thread(target=self.receiver, args=(queue, sourceIp))
             recv.start()
 
             for i in range(1, times + 1):
-                dataSize = self.sock.sendto(__createPacket(i), (destIp, 0))
+                dataSize = self.sock.sendto(self.createPacket(i, size), (destIp, 0))
+                print(dataSize)
                 packet = queue.get()
                 print(packet)
-            stop = True
+            self.stop = True
             recv.join()
             sendPacket(__createPacket(1), destIp, 1)
         except:
-            traceback.print_exc() 
+            traceback.print_exc()
+            self.stop = True
