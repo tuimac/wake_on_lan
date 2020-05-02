@@ -15,7 +15,6 @@ class Icmp:
     def echoRequest(self, destIp, times, size=64):
         destIp = socket.gethostbyname(destIp)
         sourceIp = socket.gethostbyname(socket.getfqdn())
-        print(destIp)
         stop = False
 
         def createPacket(sequence):
