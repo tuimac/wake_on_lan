@@ -1,7 +1,6 @@
 FROM centos:7
 
 ARG url=https://github.com/tuimac/wake_on_lan.git
-ENV LANG C.UTF-8
 
 EXPOSE 8080
 WORKDIR /root
