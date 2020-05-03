@@ -10,9 +10,12 @@ class Icmp:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
         self.stop = False
 
-    def __checksum(self, data):
-        print(data)
-        return 0
+    def __checksum(self, packet):
+        checksum = 0
+        for i in range(0, len(packet), 2):
+            oneComplement = 65535 ^ ((packet[i] << 8) + packet[i + 1])
+            checksum += oneComplement
+        return checksum
 
     def createPacket(self, sequence, size):
         type = 8
