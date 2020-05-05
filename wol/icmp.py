@@ -5,43 +5,78 @@ import threading
 import traceback
 from endpoint import Endpoint 
 
-class Icmp:
+class IcmpClient:
     def __init__(self):
-        endpoint = Endpoint()
-        self.inboundQueue = endpoint.getIn
+        self.bindIp = socket.gethostbyname(socket.getfqdn())
+        self.bindPort = 0
+        self.protocol = "icmp"
 
-    def __checksum(self, packet):
-        checksum = 0
-        for i in range(0, len(packet), 2):
-            oneComplement = 65535 ^ ((packet[i] << 8) + packet[i + 1])
-            checksum += oneComplement
-        return checksum
-
-    def createPacket(self, sequence, size):
-        type = 8
-        code = 0
-        checksum = 0
-        identifier = random.randint(0, 65355)
-
-        header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
-        data = b"\xff" * size
-        packet = header + data
-        checksum = self.__checksum(header + packet)
-        header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
-        packet = header + data
-        return packet
-
-    def sendEchoRequest(self, destIp, times, size=64):
-        destIp = socket.gethostbyname(destIp)
-        sourceIp = socket.gethostbyname(socket.getfqdn())
+    def __checksum(self, packet) -> int:
         try:
-            recv.start()
-            for i in range(1, times + 1):
-                dataSize = self.sock.sendto(self.createPacket(i, size), (destIp, 0))
-                packet = queue.get()
-                print(packet)
-            self.stop = True
-            recv.join()
-        except:
-            traceback.print_exc()
-            self.stop = True
+            checksum = 0
+            for i in range(0, len(packet), 2):
+                oneComplement = 65535 ^ ((packet[i] << 8) + packet[i + 1])
+                checksum += oneComplement
+            return checksum
+        except Exception as e:
+            raise e
+
+    def sendEchoRequest(self, destIp, times, size=64) -> bool:
+        '''
+        Create packe, send echo request, count success reply
+        then if all request is fine, return True.
+
+        Parameters
+        ----------
+        destIp : string
+            IP address to send packet.
+        times : int
+            times of sending packets.
+        size : int
+            size of messages within a packet.
+        '''
+        try:
+            # Create endpoints.
+            if destIp == "localhost" or destIp.split(".")[0] == "127":
+                self.bindIp = destIp
+            endpoint = Endpoint(self.bindIp, self.bindPort, self.protocol)
+            inboundQueue = endpoint.getInboundQueue()
+            outboundQueue = endpoint.getOutboundQueue()
+
+            # RFC 792: https://tools.ietf.org/html/rfc792
+            type = 8
+            code = 0
+            checksum = 0
+
+            # Use for checking wheather receive packet is correct or not.
+            ipTable = dict()
+
+            # Define source and destination IP address to pass to Endpoint Class.
+            destIp = socket.gethostbyname(destIp)
+            sourceIp = destIp
+            #sourceIp = socket.gethostbyname(socket.getfqdn())
+
+            for sequence in range(times):
+                identifier = random.randint(0, 65355)
+                ipTable[str(identifier)] = sequence
+                # Create each packet.
+                header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
+                body = b"\xff" * size
+                message = header + body
+                checksum = self.__checksum(message)
+                print(checksum)
+                header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
+                message = header + body
+                sendPacket = (message, (destIp, self.bindPort))
+                
+                # Ask to send packet to destination.
+                print(sendPacket)
+                outboundQueue.put(sendPacket)
+
+                # Ask to get packet from destination.
+                recvPacket = inboundQueue.get()
+                print(recvPacket)
+                print("-----------------------------------------")
+            endpoint.deleteAllEndpoints()
+        except Exception as e:
+            raise e

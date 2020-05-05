@@ -30,15 +30,15 @@ class Endpoint(Thread):
             raise e
 
     def getInboundQueue(self):
-        return self.inboundQueue
+        return self.__inboundQueue
 
-    def getOutBoundQueue(self):
-        return self.outboundQueue
+    def getOutboundQueue(self):
+        return self.__outboundQueue
 
-    def deleteAllSockets(self):
+    def closeAllEndpoints(self):
         try:
-            self.inbound.deleteSocket()
-            self.outbound.deleteSocket()
+            self.inbound.closeEndpoint()
+            self.outbound.closeEndpoint()
         except Exception as e:
             raise e
 
@@ -63,7 +63,7 @@ class InboundEndpoint(Thread):
         except Exception as e:
             raise e
         
-    def deleteSocket(self):
+    def closeEndpoint(self):
         try:
             self.__delete = True
             self.__queue.put("delete")
@@ -82,15 +82,13 @@ class OutboundEndpoint(Thread):
     def run(self):
         try:
             while not self.__delete:
-                message = self.__queue.get()
-                if message == "": continue
-                self.__socket.sendto(message[0], message[1])
+                self.__socket.sendto(self.__queue.get())
         except KeyboardInterrupt:
             deleteSocket()
         except Exception as e:
             raise e
 
-    def deleteSocket(self):
+    def closeEndpoint(self):
         try:
             self.__delete = True
             self.__queue.put("delete")
