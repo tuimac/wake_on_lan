@@ -1,23 +1,28 @@
 import socket
 import struct
 import random
-import threading 
+import threading
 import traceback
-from endpoint import Endpoint 
+from endpoint import Endpoint
 
 class IcmpClient:
     def __init__(self):
         self.bindIp = socket.gethostbyname(socket.getfqdn())
-        self.bindPort = 0
+        self.bindPort = 4000
         self.protocol = "icmp"
 
     def __checksum(self, packet) -> int:
         try:
-            checksum = 0
+            sumBytes = 0
             for i in range(0, len(packet), 2):
-                oneComplement = 65535 ^ ((packet[i] << 8) + packet[i + 1])
-                checksum += oneComplement
-            return checksum
+                a = packet[i]
+                if len(packet) == i + 2: b = 0
+                else: b = packet[i]
+                sumBytes += ((a << 8) + b)
+            if sumBytes > 65535:
+                return 65535 ^ (sumBytes - ((sumBytes >> 16) << 16))
+            else:
+                return 65535 ^ sumBytes
         except Exception as e:
             raise e
 
@@ -68,7 +73,7 @@ class IcmpClient:
                 header = struct.pack("bbHHh", type, code, checksum, identifier, sequence)
                 message = header + body
                 sendPacket = (message, (destIp, self.bindPort))
-                
+
                 # Ask to send packet to destination.
                 print(sendPacket)
                 outboundQueue.put(sendPacket)
@@ -77,6 +82,7 @@ class IcmpClient:
                 recvPacket = inboundQueue.get()
                 print(recvPacket)
                 print("-----------------------------------------")
-            endpoint.deleteAllEndpoints()
+            endpoint.closeAllEndpoints()
+            return False
         except Exception as e:
             raise e

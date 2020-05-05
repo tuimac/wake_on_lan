@@ -3,29 +3,29 @@ import time
 from threading import Thread
 from queue import Queue
 
-class Endpoint(Thread):
+class Endpoint():
     def __init__(self, inIp, inPort, protocol):
-        Thread.__init__(self)
-        self.__inboundQueue = Queue()
-        self.__outboundQueue = Queue()
         self.__inIp = inIp
         self.__inPort = inPort
         self.__protocol = protocol
-
-    def run(self):
+        self.__inboundQueue = Queue()
+        self.__outboundQueue = Queue()
         try:
             sock = {
                 "icmp": lambda: socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP),
                 "udp": lambda: socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             }[self.__protocol]()
-            self.inbound = InboundEndpoint(self.__inboundQueue, self.__inIp, self.__inPort, self.__sock)
-            self.inbound.daemon = True
-            self.inbound.start()
-            self.outbound = OutboundEndpoint(self.__outboundQueue, self.__sock)
-            self.outbound.daemon = True
-            self.outbound.start()
-            self.inbound.join()
-            self.outbound.join()
+            self.__inbound = InboundEndpoint(self.__inboundQueue, self.__inIp, self.__inPort, sock)
+            self.__inbound.daemon = True
+            self.__inbound.start()
+            self.__outbound = OutboundEndpoint(self.__outboundQueue, sock)
+            self.__outbound.daemon = True
+            self.__outbound.start()
+            self.__inbound.join()
+            self.__outbound.join()
+            sock.close()
+        except KeyboardInterrupt:
+            self.closeAllEndpoints()
         except Exception as e:
             raise e
 
@@ -37,8 +37,8 @@ class Endpoint(Thread):
 
     def closeAllEndpoints(self):
         try:
-            self.inbound.closeEndpoint()
-            self.outbound.closeEndpoint()
+            self.__inbound.closeEndpoint()
+            self.__outbound.closeEndpoint()
         except Exception as e:
             raise e
 
@@ -55,20 +55,18 @@ class InboundEndpoint(Thread):
     def run(self):
         try:
             self.__socket.bind((self.__ip, self.__port))
-            while not self__.delete:
+            while not self.__delete:
                 data = self.__socket.recvfrom(self.__buffer)
                 self.__queue.put(data)
         except KeyboardInterrupt:
-            deleteSocket()
+            self.closeEndpoint()
         except Exception as e:
             raise e
         
     def closeEndpoint(self):
         try:
             self.__delete = True
-            self.__queue.put("delete")
-            time.sleep(1)
-            self.__socket.close()
+            self.__queue.put((b"", ("0.0.0.0", 0)))
         except Exception as e:
             raise e
 
@@ -82,17 +80,16 @@ class OutboundEndpoint(Thread):
     def run(self):
         try:
             while not self.__delete:
-                self.__socket.sendto(self.__queue.get())
+                packet = self.__queue.get()
+                self.__socket.sendto(packet[0], packet[1])
         except KeyboardInterrupt:
-            deleteSocket()
+            self.closeEndpoint()
         except Exception as e:
             raise e
 
     def closeEndpoint(self):
         try:
             self.__delete = True
-            self.__queue.put("delete")
-            time.sleep(1)
-            self.__socket.close()
+            self.__queue.put((b"", ("0.0.0.0", 0)))
         except Exception as e:
             raise e
