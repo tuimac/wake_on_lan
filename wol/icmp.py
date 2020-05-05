@@ -2,13 +2,13 @@ import socket
 import struct
 import random
 import threading 
-from queue import Queue
 import traceback
+from endpoint import Endpoint 
 
 class Icmp:
     def __init__(self):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-        self.stop = False
+        endpoint = Endpoint()
+        self.inboundQueue = endpoint.getIn
 
     def __checksum(self, packet):
         checksum = 0
@@ -31,22 +31,11 @@ class Icmp:
         packet = header + data
         return packet
 
-    def receiver(self, queue, sourceIp):
-        self.sock.bind((sourceIp, 60000))
-        while self.stop == False:
-            packet = self.sock.recvfrom(1024)
-            queue.put(packet)
-
-    def echoRequest(self, destIp, times, size=64):
+    def sendEchoRequest(self, destIp, times, size=64):
         destIp = socket.gethostbyname(destIp)
         sourceIp = socket.gethostbyname(socket.getfqdn())
-        print(sourceIp)
-        print(destIp)
         try:
-            queue = Queue()
-            recv = threading.Thread(target=self.receiver, args=(queue, sourceIp))
             recv.start()
-
             for i in range(1, times + 1):
                 dataSize = self.sock.sendto(self.createPacket(i, size), (destIp, 0))
                 packet = queue.get()
