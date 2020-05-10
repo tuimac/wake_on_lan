@@ -1,5 +1,4 @@
 import time
-import datetime
 import socket
 import struct
 import random
@@ -25,7 +24,7 @@ class IcmpClient:
         except Exception as e:
             raise e
 
-    def sendEchoRequest(self, destIp, destPort=7, times=0, size=64) -> bool:
+    def sendEchoRequest(self, destIp, destPort=7, times=0, size=64, interval=1) -> bool:
         '''
         Create packe, send echo request, count success reply
         then if all request is fine, return True.
@@ -67,7 +66,7 @@ class IcmpClient:
             sourceIp = destIp
             
             for sequence in range(times):
-                startTime = datetime.datetime.now()
+                startTime = time.time()
                 identifier = random.randint(0, 65355)
                 idTable[str(identifier)] = sequence
                 # Create each packet.
@@ -81,12 +80,12 @@ class IcmpClient:
                 outboundQueue.put(message)
                 # Ask to get packet from destination.
                 recvPacket = inboundQueue.get()
-                # Check
+                # Check received packet is valid or not.
                 header = recvPacket[0][20:28]
                 recvType, recvCode, recvChecksum, recvId, recvSequence = struct.unpack("bbHHh", header)
                 if recvType != 0: return False
                 if idTable[str(recvId)] != recvSequence: return False
-                time.sleep(1 - startTime - datetime.datetime.now())
+                time.sleep(interval - (time.time() - startTime))
             endpoint.closeAllEndpoints()
             return True
         except KeyboardInterrupt:

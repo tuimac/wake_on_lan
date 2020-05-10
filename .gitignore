@@ -3,3 +3,4 @@ __pycache__
 .aws
 macaddress
 wol/old/
+wol/test.py
