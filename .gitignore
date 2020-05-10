@@ -2,3 +2,4 @@ add_remote_repo
 __pycache__
 .aws
 macaddress
+wol/old/
