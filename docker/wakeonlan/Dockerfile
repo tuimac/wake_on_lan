@@ -1,6 +1,6 @@
 FROM centos:7
 
-ARG url=https://github.com/tuimac/wake_on_lan.git
+ARG url=https://github.com/tuimac/wakeonlan.git
 ARG pjtname=wakeonlan
 
 EXPOSE 8000
@@ -11,7 +11,7 @@ ADD env/bashrc /root/.bashrc
 ADD env/login_screen /root/.login_screen
 ADD env/centos/vim.sh /etc/profile.d/vim.sh
 ADD requirements.txt /root/requirements.txt
-ADD add_remote_repo /root/add_remote_repo
+ADD add_remote_repo /root/$pjtname/add_remote_repo
 
 RUN yum update -y && \
     yum install -y epel-release && \
@@ -22,9 +22,7 @@ RUN yum update -y && \
     mkdir -p /etc/vim/backup
     #django-admin startproject $pjtname
 
-WORKDIR /root/$pjtname/$pjtname/$pjtname
-COPY settings.py settings.py
-WORKDIR /root/$pjtname
-
-ENTRYPOINT ["python3", "manage.py", "migrate"]
+#WORKDIR /root/$pjtname/$pjtname/$pjtname
+#COPY settings.py settings.py
+WORKDIR /root/$pjtname/$pjtname
 ENTRYPOINT ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
