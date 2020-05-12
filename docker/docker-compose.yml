@@ -1,12 +1,12 @@
 version: '3'
 services:
   wakeonlan:
-    build: ./wol
+    build: ./wakeonlan
     container_name: wakeonlan
     ports:
       - "8080:8000"
     volumes:
-      - "./api/volume:/tmp"
+      - "./wakeonlan/volume:/tmp"
     tty: true
     stdin_open: true
 networks:

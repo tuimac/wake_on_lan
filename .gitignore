@@ -4,3 +4,4 @@ __pycache__
 macaddress
 wol/old/
 wol/test.py
+docker/wol/.netrc.gpg

@@ -1,4 +1,5 @@
 setuptools
-django
+django==2.1
 djangorestframework
 django-filter
+pysqlite3
