@@ -19,7 +19,8 @@ RUN yum update -y && \
     pip3 install -r /root/requirements.txt && \
     git clone $url && \
     mkdir -p /etc/vim/undo && \
-    mkdir -p /etc/vim/backup
+    mkdir -p /etc/vim/backup && \
+    django-admin startproject $pjtname
 
 WORKDIR /root/$pjtname/$pjtname
 COPY settings.py settings.py
