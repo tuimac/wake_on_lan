@@ -7,9 +7,13 @@ class Arp:
         pass
 
     def getMacAddress(self):
-        data = uuid.getnode()
+        rawData = uuid.getnode()
+        data = bytes()
+        for i in range(6):
+            data += bytes([rawData & 0xff])
+            rawData = rawData >> 8
         return data
 
-    def scan(self, iprange, ifname):
+    def scan(self, iprange):
         macaddress = self.getMacAddress()
         print(macaddress)
